@@ -1,22 +1,34 @@
 package com.example.latrecyclerview
 
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class wayang(
     var foto : String,
     var nama : String,
     var karakter : String,
     var deskripsi : String
-)
+) : Parcelable
 class adapterRecView(private val listWayang : ArrayList<wayang>) : RecyclerView.Adapter<adapterRecView.ListViewHolder> () {
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data:wayang)
+    }
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
+
     inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var _namaWayang = itemView.findViewById<TextView>(R.id.namaWayang)
         var _karakterWayang = itemView.findViewById<TextView>(R.id.karakterWayang)
@@ -45,7 +57,8 @@ class adapterRecView(private val listWayang : ArrayList<wayang>) : RecyclerView.
         Picasso.get().load(wayang.foto).into(holder._gambarWayang)
 
         holder._gambarWayang.setOnClickListener {
-            Toast.makeText(holder.itemView.context, wayang.nama, Toast.LENGTH_LONG).show()
+//            Toast.makeText(holder.itemView.context, wayang.nama, Toast.LENGTH_LONG).show()
+            onItemClickCallback.onItemClicked(listWayang[position])
         }
     }
 }
